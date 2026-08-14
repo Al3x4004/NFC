@@ -280,19 +280,7 @@
 </main>
 
 <script>
-const REPO_OWNER = "Al3x4004";
-const REPO_NAME = "NFC";
-const FILE_PATH = "dades.json";
-const API_URL = "https://api.github.com/repos/" + REPO_OWNER + "/" + REPO_NAME + "/contents/" + FILE_PATH;
-
-function getToken(){
-  let t = localStorage.getItem('gh_token');
-  if(!t){
-    t = prompt("Introdueix el token d'accés (només el primer cop en aquest mòbil):");
-    if(t) localStorage.setItem('gh_token', t.trim());
-  }
-  return t ? t.trim() : '';
-}
+const WORKER_URL = "https://nfc-oficina.a-conde.workers.dev";
 
 const AFORAMENT_MAX = 4;
 const TORNS = ["13:00","13:30","14:00","14:30"];
@@ -303,46 +291,21 @@ function avuiKey(){
   return new Date().toISOString().slice(0,10);
 }
 
-function utf8ToBase64(str){
-  return btoa(unescape(encodeURIComponent(str)));
-}
-function base64ToUtf8(str){
-  return decodeURIComponent(escape(atob(str)));
-}
-
 async function fetchData(){
-  const token = getToken();
-  const res = await fetch(API_URL, {
-    headers: {
-      "Authorization": "token " + token,
-      "Accept": "application/vnd.github+json"
-    },
-    cache: "no-store"
-  });
+  const res = await fetch(WORKER_URL, { cache: "no-store" });
   if(!res.ok) throw new Error("No s'ha pogut llegir el fitxer");
-  const json = await res.json();
-  const content = base64ToUtf8(json.content.replace(/\n/g,''));
-  return { data: JSON.parse(content), sha: json.sha };
+  return res.json();
 }
 
 async function saveData(newData, sha){
-  const token = getToken();
-  const body = {
-    message: "Actualitza dades " + new Date().toISOString(),
-    content: utf8ToBase64(JSON.stringify(newData, null, 2)),
-    sha: sha
-  };
-  const res = await fetch(API_URL, {
-    method: "PUT",
-    headers: {
-      "Authorization": "token " + token,
-      "Accept": "application/vnd.github+json"
-    },
-    body: JSON.stringify(body)
+  const res = await fetch(WORKER_URL, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ data: newData, sha: sha })
   });
   if(!res.ok){
     const err = await res.json().catch(()=>({}));
-    throw new Error(err.message || "Error en desar");
+    throw new Error(err.error || "Error en desar");
   }
   return res.json();
 }
