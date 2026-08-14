@@ -2,179 +2,279 @@
 <html lang="ca">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>Oficina · Accessos ràpids</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
+<title>Fitxatge</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
   :root{
-    --ink:#1c2b23;
-    --ink-soft:#4d5c53;
-    --ink-faint:#8b978f;
-    --paper:#f6f4ee;
-    --card:#ffffff;
-    --line:#e2ddd0;
-    --moss:#3f5b45;
-    --moss-light:#e7ede3;
-    --clay:#b5573a;
-    --clay-light:#f3e2dc;
-    --gold:#a9822f;
-    --gold-light:#f3ead3;
-    --radius:14px;
+    --plate:#1b201d;
+    --plate-deep:#121513;
+    --card:#eeeadd;
+    --card-dim:#e2ddca;
+    --ink:#242019;
+    --ink-soft:#5c5647;
+    --brass:#a9803f;
+    --brass-deep:#7a5a28;
+    --brass-glow:#d4a855;
+    --rust:#9c4a3d;
+    --rust-light:#e6cec7;
+    --olive:#5b6b4f;
+    --olive-light:#dde3d3;
+    --line:rgba(0,0,0,0.12);
+    --line-light:rgba(255,255,255,0.08);
   }
-  *{box-sizing:border-box;}
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+  html,body{margin:0;}
   body{
-    margin:0;
-    background:var(--paper);
-    font-family:'Segoe UI', system-ui, -apple-system, sans-serif;
+    background:var(--plate-deep);
+    background-image:
+      radial-gradient(ellipse at top, rgba(255,255,255,0.03), transparent 60%);
+    font-family:'Inter', system-ui, sans-serif;
     color:var(--ink);
     min-height:100vh;
-    padding-bottom:2rem;
+    padding:0 0 2rem;
   }
+
+  .rivet-bar{
+    height:4px;
+    background:linear-gradient(90deg, var(--brass-deep), var(--brass), var(--brass-deep));
+  }
+
   header{
-    padding:1.6rem 1.2rem 1.1rem;
-    text-align:center;
+    padding:1.1rem 1rem 0.9rem;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
   }
-  header .eyebrow{
-    font-size:11px;
-    letter-spacing:.14em;
-    text-transform:uppercase;
-    color:var(--ink-faint);
-    margin:0 0 6px;
+  header .brand{
+    display:flex;
+    align-items:baseline;
+    gap:8px;
+  }
+  header .brand .mark{
+    width:9px;height:9px;border-radius:50%;
+    background:var(--brass-glow);
+    box-shadow:0 0 8px var(--brass-glow);
+    flex-shrink:0;
   }
   header h1{
-    font-family:Georgia, 'Times New Roman', serif;
-    font-size:26px;
-    font-weight:400;
+    font-family:'Oswald', sans-serif;
+    font-weight:600;
+    font-size:17px;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+    color:var(--card);
     margin:0;
-    letter-spacing:.01em;
   }
-  nav{
+  .admin-btn{
+    width:34px;
+    height:34px;
+    border-radius:8px;
+    border:1px solid var(--line-light);
+    background:rgba(255,255,255,0.04);
+    color:var(--card-dim);
     display:flex;
-    gap:8px;
+    align-items:center;
+    justify-content:center;
+    cursor:pointer;
+    font-size:15px;
+    flex-shrink:0;
+  }
+  .admin-btn:active{background:rgba(255,255,255,0.09);}
+
+  nav{
+    display:grid;
+    grid-template-columns:1fr 1fr 1fr;
+    gap:2px;
     padding:0 1rem;
-    margin-bottom:1.2rem;
+    margin-bottom:1.1rem;
   }
   nav button{
-    flex:1;
-    border:1px solid var(--line);
-    background:var(--card);
-    color:var(--ink-soft);
-    padding:11px 6px;
-    border-radius:12px;
-    font-size:13px;
-    font-weight:600;
+    border:1px solid var(--line-light);
+    background:rgba(255,255,255,0.03);
+    color:var(--card-dim);
+    padding:12px 4px;
+    font-family:'Oswald', sans-serif;
+    font-size:12.5px;
+    font-weight:500;
+    letter-spacing:.05em;
+    text-transform:uppercase;
     cursor:pointer;
-    transition:all .15s ease;
+    border-radius:9px;
+    transition:background .12s ease, color .12s ease;
   }
   nav button.active{
-    background:var(--ink);
-    color:var(--paper);
-    border-color:var(--ink);
+    background:var(--brass);
+    border-color:var(--brass);
+    color:var(--plate-deep);
   }
+
   main{
     padding:0 1rem;
-    max-width:480px;
+    max-width:460px;
     margin:0 auto;
   }
   .panel{display:none;}
-  .panel.active{display:block; animation:fade .25s ease;}
-  @keyframes fade{from{opacity:0; transform:translateY(4px);} to{opacity:1; transform:translateY(0);}}
+  .panel.active{display:block; animation:rise .22s ease;}
+  @keyframes rise{from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:translateY(0);}}
 
-  .fichar-card{
+  .plate-card{
     background:var(--card);
-    border:1px solid var(--line);
-    border-radius:var(--radius);
-    padding:2rem 1.5rem;
+    border-radius:10px;
+    padding:1.6rem 1.4rem 1.5rem;
+    box-shadow:0 1px 0 rgba(255,255,255,0.5) inset, 0 10px 26px rgba(0,0,0,0.35);
+    position:relative;
+    overflow:hidden;
+  }
+  .plate-card::before{
+    content:"";
+    position:absolute;
+    top:10px; left:10px;
+    width:6px; height:6px;
+    border-radius:50%;
+    background:rgba(0,0,0,0.15);
+    box-shadow:
+      calc(100% - 4px) 0 0 rgba(0,0,0,0.15);
+  }
+
+  .clock-face{
     text-align:center;
+    padding:0.4rem 0 1.5rem;
   }
-  .fichar-card .clock{
-    font-family:Georgia, serif;
-    font-size:40px;
-    margin:0 0 4px;
+  .clock-face .time{
+    font-family:'JetBrains Mono', monospace;
+    font-weight:700;
+    font-size:52px;
     letter-spacing:.02em;
+    color:var(--ink);
+    line-height:1;
+    margin:0;
   }
-  .fichar-card .date{
-    font-size:13px;
-    color:var(--ink-faint);
-    margin:0 0 22px;
-    text-transform:capitalize;
+  .clock-face .date{
+    font-family:'Oswald', sans-serif;
+    font-size:12px;
+    letter-spacing:.12em;
+    text-transform:uppercase;
+    color:var(--ink-soft);
+    margin:8px 0 0;
   }
+
   .go-btn{
     display:block;
     width:100%;
     padding:16px;
-    border-radius:12px;
+    border-radius:8px;
     border:none;
-    background:var(--moss);
+    background:var(--olive);
     color:#fff;
-    font-size:16px;
+    font-family:'Oswald', sans-serif;
+    font-size:15px;
     font-weight:600;
+    letter-spacing:.04em;
+    text-transform:uppercase;
     text-decoration:none;
+    text-align:center;
     cursor:pointer;
   }
-  .go-btn:active{opacity:.85;}
+  .go-btn:active{filter:brightness(0.92);}
   .hint{
-    margin-top:14px;
+    margin-top:12px;
     font-size:12px;
-    color:var(--ink-faint);
+    color:var(--ink-soft);
     line-height:1.5;
+    text-align:center;
   }
 
-  .section-label{
-    font-size:12px;
-    text-transform:uppercase;
-    letter-spacing:.08em;
-    color:var(--ink-faint);
-    margin:0 0 10px 2px;
+  .name-bar{
+    margin-bottom:1rem;
   }
+  .name-bar label{
+    display:block;
+    font-family:'Oswald', sans-serif;
+    font-size:11px;
+    letter-spacing:.1em;
+    text-transform:uppercase;
+    color:var(--card-dim);
+    margin:0 0 6px 2px;
+  }
+  .name-bar input{
+    width:100%;
+    border:1px solid var(--line-light);
+    background:rgba(255,255,255,0.05);
+    border-radius:8px;
+    padding:12px 14px;
+    font-size:15px;
+    color:var(--card);
+    font-family:'Inter', sans-serif;
+  }
+  .name-bar input::placeholder{color:rgba(238,234,221,0.35);}
+  .name-bar input:focus{outline:none; border-color:var(--brass);}
+
+  .section-label{
+    font-family:'Oswald', sans-serif;
+    font-size:11px;
+    letter-spacing:.12em;
+    text-transform:uppercase;
+    color:var(--card-dim);
+    margin:0 0 10px 3px;
+  }
+
   .slot-grid{
     display:grid;
     grid-template-columns:repeat(2,1fr);
     gap:8px;
-    margin-bottom:1.4rem;
+    margin-bottom:1.2rem;
   }
   .slot{
     border:1px solid var(--line);
     background:var(--card);
-    border-radius:10px;
-    padding:10px 8px;
+    border-radius:8px;
+    padding:12px 8px;
     text-align:center;
-    font-size:14px;
-    font-weight:600;
     cursor:pointer;
+  }
+  .slot .t{
+    font-family:'JetBrains Mono', monospace;
+    font-weight:700;
+    font-size:17px;
+    color:var(--ink);
+    display:block;
   }
   .slot .count{
     display:block;
     font-size:11px;
-    font-weight:400;
-    color:var(--ink-faint);
-    margin-top:2px;
+    color:var(--ink-soft);
+    margin-top:3px;
+    letter-spacing:.03em;
   }
   .slot.selected{
-    background:var(--moss);
-    border-color:var(--moss);
-    color:#fff;
+    background:var(--olive);
+    border-color:var(--olive);
   }
-  .slot.selected .count{color:var(--moss-light);}
+  .slot.selected .t, .slot.selected .count{color:#fff;}
   .slot.full{
-    opacity:.45;
+    background:var(--card-dim);
+    opacity:.55;
     cursor:not-allowed;
   }
-  .slot.mine{
-    border-color:var(--gold);
-    background:var(--gold-light);
-  }
+  .slot.full .t{color:var(--ink-soft);}
 
   .room-card{
-    border:1px solid var(--line);
+    border-radius:8px;
     background:var(--card);
-    border-radius:var(--radius);
-    padding:14px 16px;
+    padding:12px 14px 14px;
     margin-bottom:10px;
   }
   .room-card .room-name{
+    font-family:'Oswald', sans-serif;
     font-weight:600;
-    font-size:15px;
-    margin:0 0 8px;
+    font-size:13px;
+    letter-spacing:.05em;
+    text-transform:uppercase;
+    color:var(--ink);
+    margin:0 0 9px;
   }
   .room-slots{
     display:flex;
@@ -183,65 +283,157 @@
   }
   .room-slot{
     border:1px solid var(--line);
-    background:var(--paper);
-    border-radius:8px;
-    padding:6px 10px;
-    font-size:12.5px;
-    font-weight:600;
+    background:var(--card-dim);
+    border-radius:6px;
+    padding:7px 10px;
+    font-family:'JetBrains Mono', monospace;
+    font-size:12px;
+    font-weight:500;
     cursor:pointer;
     color:var(--ink-soft);
   }
   .room-slot.taken{
-    background:var(--clay-light);
-    color:var(--clay);
-    border-color:var(--clay-light);
+    background:var(--rust-light);
+    color:var(--rust);
+    border-color:var(--rust-light);
     cursor:not-allowed;
   }
   .room-slot.mine{
-    background:var(--gold-light);
-    border-color:var(--gold);
-    color:#7a5c1f;
+    background:var(--brass);
+    border-color:var(--brass);
+    color:#fff;
   }
-
-  .name-bar{
-    display:flex;
-    gap:8px;
-    margin-bottom:1.2rem;
-  }
-  .name-bar input{
-    flex:1;
-    border:1px solid var(--line);
-    border-radius:10px;
-    padding:10px 12px;
-    font-size:14px;
-    background:var(--card);
-    color:var(--ink);
-  }
-  .name-bar input:focus{outline:none; border-color:var(--moss);}
 
   .status-msg{
     text-align:center;
-    font-size:13px;
-    color:var(--ink-faint);
-    padding:10px 0 2px;
+    font-size:12.5px;
+    color:var(--card-dim);
+    padding:8px 0 4px;
     min-height:20px;
   }
-  .status-msg.ok{color:var(--moss); font-weight:600;}
-  .status-msg.err{color:var(--clay); font-weight:600;}
+  .status-msg.ok{color:#c7d9b8; font-weight:600;}
+  .status-msg.err{color:#e6b3a5; font-weight:600;}
 
   .loading{
     text-align:center;
-    color:var(--ink-faint);
-    font-size:13px;
+    color:var(--card-dim);
+    font-size:12.5px;
     padding:2rem 0;
+  }
+
+  .overlay{
+    display:none;
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,0.6);
+    z-index:50;
+    align-items:flex-end;
+    justify-content:center;
+  }
+  .overlay.active{display:flex;}
+  .sheet{
+    background:var(--card);
+    border-radius:16px 16px 0 0;
+    width:100%;
+    max-width:460px;
+    max-height:82vh;
+    overflow-y:auto;
+    padding:1.3rem 1.2rem 2rem;
+  }
+  .sheet-head{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    margin-bottom:1rem;
+  }
+  .sheet-head h2{
+    font-family:'Oswald', sans-serif;
+    font-size:15px;
+    letter-spacing:.05em;
+    text-transform:uppercase;
+    margin:0;
+    color:var(--ink);
+  }
+  .sheet-close{
+    border:none;
+    background:var(--card-dim);
+    width:30px;height:30px;
+    border-radius:50%;
+    font-size:16px;
+    color:var(--ink-soft);
+    cursor:pointer;
+  }
+  .pass-row{
+    display:flex;
+    gap:8px;
+    margin-bottom:1rem;
+  }
+  .pass-row input{
+    flex:1;
+    border:1px solid var(--line);
+    border-radius:8px;
+    padding:11px 12px;
+    font-size:15px;
+    background:#fff;
+  }
+  .pass-row button{
+    border:none;
+    background:var(--olive);
+    color:#fff;
+    padding:0 18px;
+    border-radius:8px;
+    font-family:'Oswald', sans-serif;
+    font-weight:600;
+    letter-spacing:.03em;
+    text-transform:uppercase;
+    font-size:13px;
+    cursor:pointer;
+  }
+  .admin-block{
+    margin-bottom:1.2rem;
+  }
+  .admin-block h3{
+    font-family:'Oswald', sans-serif;
+    font-size:12px;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+    color:var(--ink-soft);
+    margin:0 0 8px 2px;
+  }
+  .admin-row{
+    display:flex;
+    justify-content:space-between;
+    align-items:baseline;
+    border-bottom:1px solid var(--line);
+    padding:7px 2px;
+    font-size:13.5px;
+  }
+  .admin-row .k{
+    font-family:'JetBrains Mono', monospace;
+    color:var(--ink-soft);
+  }
+  .admin-row .v{
+    color:var(--ink);
+    font-weight:500;
+    text-align:right;
+  }
+  .admin-empty{
+    font-size:13px;
+    color:var(--ink-soft);
+    padding:6px 2px;
   }
 </style>
 </head>
 <body>
 
+<div class="rivet-bar"></div>
+
 <header>
-  <p class="eyebrow">Oficina</p>
-  <h1>Accessos ràpids</h1>
+  <div class="brand">
+    <span class="mark"></span>
+    <h1>Fitxatge</h1>
+  </div>
+  <button class="admin-btn" id="adminOpenBtn" aria-label="Administració">&#9881;</button>
 </header>
 
 <nav>
@@ -253,20 +445,23 @@
 <main>
 
   <div class="name-bar">
-    <input type="text" id="nom" placeholder="El teu nom (per a les reserves)" />
+    <label for="nom">El teu nom</label>
+    <input type="text" id="nom" placeholder="Nom i cognom" />
   </div>
 
   <div class="panel active" id="panel-fichar">
-    <div class="fichar-card">
-      <p class="clock" id="rellotge">--:--</p>
-      <p class="date" id="data">-</p>
-      <a href="https://timenet-cp.gpisoftware.com/check/e87a5f18-d9ed-4191-9a7b-84f52fd87fdf" id="ficharLink" class="go-btn" target="_blank" rel="noopener">Anar a fitxar a Timenet</a>
-      <p class="hint">S'obrirà Timenet al navegador i fitxarà automàticament amb el teu codi.</p>
+    <div class="plate-card">
+      <div class="clock-face">
+        <p class="time" id="rellotge">--:--</p>
+        <p class="date" id="data">-</p>
+      </div>
+      <a href="https://timenet-cp.gpisoftware.com/check/e87a5f18-d9ed-4191-9a7b-84f52fd87fdf" id="ficharLink" class="go-btn" target="_blank" rel="noopener">Fitxar ara</a>
+      <p class="hint">S'obre Timenet i fitxa automàticament amb el teu codi.</p>
     </div>
   </div>
 
   <div class="panel" id="panel-menjador">
-    <p class="section-label" id="menjadorLabel">Avui</p>
+    <p class="section-label">Torns d'avui</p>
     <div class="slot-grid" id="slotGrid"></div>
     <p class="status-msg" id="menjadorStatus"></p>
   </div>
@@ -279,8 +474,37 @@
 
 </main>
 
+<div class="overlay" id="adminOverlay">
+  <div class="sheet">
+    <div class="sheet-head">
+      <h2 id="sheetTitle">Administració</h2>
+      <button class="sheet-close" id="adminCloseBtn" aria-label="Tancar">&times;</button>
+    </div>
+
+    <div id="adminLogin">
+      <div class="pass-row">
+        <input type="password" id="adminPass" placeholder="Contrasenya" />
+        <button id="adminSubmit">Entrar</button>
+      </div>
+      <p class="status-msg" id="adminLoginStatus"></p>
+    </div>
+
+    <div id="adminPanel" style="display:none;">
+      <div class="admin-block">
+        <h3>Menjador · avui</h3>
+        <div id="adminMenjador"></div>
+      </div>
+      <div class="admin-block">
+        <h3>Sales · avui</h3>
+        <div id="adminSales"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script>
 const WORKER_URL = "https://nfc-oficina.a-conde.workers.dev";
+const ADMIN_PASS = "oficina2026";
 
 const AFORAMENT_MAX = 4;
 const TORNS = ["13:00","13:30","14:00","14:30"];
@@ -333,8 +557,6 @@ function tick(){
 tick();
 setInterval(tick, 1000*15);
 
-const ficharLink = document.getElementById('ficharLink');
-
 const slotGrid = document.getElementById('slotGrid');
 const menjadorStatus = document.getElementById('menjadorStatus');
 
@@ -357,8 +579,8 @@ async function renderMenjador(){
     const meva = nomCache && persones.includes(nomCache);
     const ple = persones.length >= AFORAMENT_MAX;
     const div = document.createElement('div');
-    div.className = 'slot' + (meva ? ' mine selected' : '') + (ple && !meva ? ' full' : '');
-    div.innerHTML = torn + '<span class="count">' + persones.length + '/' + AFORAMENT_MAX + '</span>';
+    div.className = 'slot' + (meva ? ' selected' : '') + (ple && !meva ? ' full' : '');
+    div.innerHTML = '<span class="t">'+torn+'</span><span class="count">'+persones.length+'/'+AFORAMENT_MAX+'</span>';
     div.addEventListener('click', ()=>toggleMenjador(torn));
     slotGrid.appendChild(div);
   });
@@ -366,7 +588,7 @@ async function renderMenjador(){
 
 async function toggleMenjador(torn){
   if(!nomCache){
-    menjadorStatus.textContent = 'Escriu el teu nom a dalt primer';
+    menjadorStatus.textContent = 'Escriu el teu nom primer';
     menjadorStatus.className = 'status-msg err';
     return;
   }
@@ -435,7 +657,7 @@ async function renderSales(){
       let cls = 'room-slot';
       if(meva) cls += ' mine';
       if(ocupada) cls += ' taken';
-      return '<div class="'+cls+'" data-sala="'+sala+'" data-hora="'+hora+'">'+hora+(ocupada?' · ocup.':'')+'</div>';
+      return '<div class="'+cls+'" data-sala="'+sala+'" data-hora="'+hora+'">'+hora+'</div>';
     }).join('');
     card.innerHTML = '<p class="room-name">'+sala+'</p><div class="room-slots">'+slotsHtml+'</div>';
     roomsList.appendChild(card);
@@ -448,7 +670,7 @@ async function renderSales(){
 
 async function toggleSala(sala, hora){
   if(!nomCache){
-    salesStatus.textContent = 'Escriu el teu nom a dalt primer';
+    salesStatus.textContent = 'Escriu el teu nom primer';
     salesStatus.className = 'status-msg err';
     return;
   }
@@ -484,6 +706,83 @@ async function toggleSala(sala, hora){
     salesStatus.className = 'status-msg err';
   }
   renderSales();
+}
+
+const adminOverlay = document.getElementById('adminOverlay');
+const adminOpenBtn = document.getElementById('adminOpenBtn');
+const adminCloseBtn = document.getElementById('adminCloseBtn');
+const adminLogin = document.getElementById('adminLogin');
+const adminPanel = document.getElementById('adminPanel');
+const adminPass = document.getElementById('adminPass');
+const adminSubmit = document.getElementById('adminSubmit');
+const adminLoginStatus = document.getElementById('adminLoginStatus');
+
+adminOpenBtn.addEventListener('click', ()=>{
+  adminOverlay.classList.add('active');
+});
+adminCloseBtn.addEventListener('click', ()=>{
+  adminOverlay.classList.remove('active');
+});
+adminOverlay.addEventListener('click', (e)=>{
+  if(e.target === adminOverlay) adminOverlay.classList.remove('active');
+});
+
+adminSubmit.addEventListener('click', async ()=>{
+  if(adminPass.value !== ADMIN_PASS){
+    adminLoginStatus.textContent = 'Contrasenya incorrecta';
+    adminLoginStatus.className = 'status-msg err';
+    return;
+  }
+  adminLogin.style.display = 'none';
+  adminPanel.style.display = 'block';
+  await renderAdmin();
+});
+
+async function renderAdmin(){
+  const adminMenjador = document.getElementById('adminMenjador');
+  const adminSales = document.getElementById('adminSales');
+  adminMenjador.innerHTML = '<div class="admin-empty">Carregant...</div>';
+  adminSales.innerHTML = '';
+
+  let state;
+  try{
+    state = await fetchData();
+  }catch(e){
+    adminMenjador.innerHTML = '<div class="admin-empty">No s\'han pogut carregar les dades</div>';
+    return;
+  }
+  const key = avuiKey();
+  const menjadorDia = (state.data.menjador && state.data.menjador[key]) || {};
+  const salesDia = (state.data.sales && state.data.sales[key]) || {};
+
+  adminMenjador.innerHTML = '';
+  let hiHaMenjador = false;
+  TORNS.forEach(torn=>{
+    const persones = menjadorDia[torn] || [];
+    if(persones.length === 0) return;
+    hiHaMenjador = true;
+    const row = document.createElement('div');
+    row.className = 'admin-row';
+    row.innerHTML = '<span class="k">'+torn+'</span><span class="v">'+persones.join(', ')+'</span>';
+    adminMenjador.appendChild(row);
+  });
+  if(!hiHaMenjador) adminMenjador.innerHTML = '<div class="admin-empty">Cap reserva encara</div>';
+
+  adminSales.innerHTML = '';
+  let hiHaSales = false;
+  SALES.forEach(sala=>{
+    const salaData = salesDia[sala] || {};
+    const hores = Object.keys(salaData);
+    if(hores.length === 0) return;
+    hiHaSales = true;
+    hores.sort().forEach(hora=>{
+      const row = document.createElement('div');
+      row.className = 'admin-row';
+      row.innerHTML = '<span class="k">'+sala+' · '+hora+'</span><span class="v">'+salaData[hora]+'</span>';
+      adminSales.appendChild(row);
+    });
+  });
+  if(!hiHaSales) adminSales.innerHTML = '<div class="admin-empty">Cap reserva encara</div>';
 }
 </script>
 
