@@ -260,9 +260,8 @@
     <div class="fichar-card">
       <p class="clock" id="rellotge">--:--</p>
       <p class="date" id="data">-</p>
-      <a href="https://www.timenet.es" id="ficharLink" class="go-btn" target="_blank" rel="noopener">Anar a fitxar a Timenet</a>
-      <p class="hint">S'obrirà Timenet al navegador. Si tens la URL directa de la teva empresa, enganxa-la a sota perquè el proper cop l'accés sigui directe.</p>
-      <input type="text" id="timenetUrl" placeholder="https://laseva-empresa.timenet.es/..." style="margin-top:12px; width:100%; padding:10px 12px; border:1px solid var(--line); border-radius:10px; font-size:13px;" />
+      <a href="https://timenet-cp.gpisoftware.com/check/e87a5f18-d9ed-4191-9a7b-84f52fd87fdf" id="ficharLink" class="go-btn" target="_blank" rel="noopener">Anar a fitxar a Timenet</a>
+      <p class="hint">S'obrirà Timenet al navegador i fitxarà automàticament amb el teu codi.</p>
     </div>
   </div>
 
@@ -370,16 +369,7 @@ function tick(){
 tick();
 setInterval(tick, 1000*15);
 
-const timenetUrlInput = document.getElementById('timenetUrl');
 const ficharLink = document.getElementById('ficharLink');
-const TIMENET_KEY = 'timenet-url-cache';
-let timenetCache = '';
-timenetUrlInput.addEventListener('change', ()=>{
-  const val = timenetUrlInput.value.trim();
-  if(!val) return;
-  ficharLink.href = val;
-  timenetCache = val;
-});
 
 const slotGrid = document.getElementById('slotGrid');
 const menjadorStatus = document.getElementById('menjadorStatus');
