@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Oficina · Accessos ràpids</title>
+<style>
+  :root{
+    --ink:#1c2b23;
+    --ink-soft:#4d5c53;
+    --ink-faint:#8b978f;
+    --paper:#f6f4ee;
+    --card:#ffffff;
+    --line:#e2ddd0;
+    --moss:#3f5b45;
+    --moss-light:#e7ede3;
+    --clay:#b5573a;
+    --clay-light:#f3e2dc;
+    --gold:#a9822f;
+    --gold-light:#f3ead3;
+    --radius:14px;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--paper);
+    font-family:'Segoe UI', system-ui, -apple-system, sans-serif;
+    color:var(--ink);
+    min-height:100vh;
+    padding-bottom:2rem;
+  }
+  header{
+    padding:1.6rem 1.2rem 1.1rem;
+    text-align:center;
+  }
+  header .eyebrow{
+    font-size:11px;
+    letter-spacing:.14em;
+    text-transform:uppercase;
+    color:var(--ink-faint);
+    margin:0 0 6px;
+  }
+  header h1{
+    font-family:Georgia, 'Times New Roman', serif;
+    font-size:26px;
+    font-weight:400;
+    margin:0;
+    letter-spacing:.01em;
+  }
+  nav{
+    display:flex;
+    gap:8px;
+    padding:0 1rem;
+    margin-bottom:1.2rem;
+  }
+  nav button{
+    flex:1;
+    border:1px solid var(--line);
+    background:var(--card);
+    color:var(--ink-soft);
+    padding:11px 6px;
+    border-radius:12px;
+    font-size:13px;
+    font-weight:600;
+    cursor:pointer;
+    transition:all .15s ease;
+  }
+  nav button.active{
+    background:var(--ink);
+    color:var(--paper);
+    border-color:var(--ink);
+  }
+  main{
+    padding:0 1rem;
+    max-width:480px;
+    margin:0 auto;
+  }
+  .panel{display:none;}
+  .panel.active{display:block; animation:fade .25s ease;}
+  @keyframes fade{from{opacity:0; transform:translateY(4px);} to{opacity:1; transform:translateY(0);}}
+
+  .fichar-card{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    padding:2rem 1.5rem;
+    text-align:center;
+  }
+  .fichar-card .clock{
+    font-family:Georgia, serif;
+    font-size:40px;
+    margin:0 0 4px;
+    letter-spacing:.02em;
+  }
+  .fichar-card .date{
+    font-size:13px;
+    color:var(--ink-faint);
+    margin:0 0 22px;
+    text-transform:capitalize;
+  }
+  .go-btn{
+    display:block;
+    width:100%;
+    padding:16px;
+    border-radius:12px;
+    border:none;
+    background:var(--moss);
+    color:#fff;
+    font-size:16px;
+    font-weight:600;
+    text-decoration:none;
+    cursor:pointer;
+  }
+  .go-btn:active{opacity:.85;}
+  .hint{
+    margin-top:14px;
+    font-size:12px;
+    color:var(--ink-faint);
+    line-height:1.5;
+  }
+
+  .section-label{
+    font-size:12px;
+    text-transform:uppercase;
+    letter-spacing:.08em;
+    color:var(--ink-faint);
+    margin:0 0 10px 2px;
+  }
+  .slot-grid{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:8px;
+    margin-bottom:1.4rem;
+  }
+  .slot{
+    border:1px solid var(--line);
+    background:var(--card);
+    border-radius:10px;
+    padding:10px 8px;
+    text-align:center;
+    font-size:14px;
+    font-weight:600;
+    cursor:pointer;
+  }
+  .slot .count{
+    display:block;
+    font-size:11px;
+    font-weight:400;
+    color:var(--ink-faint);
+    margin-top:2px;
+  }
+  .slot.selected{
+    background:var(--moss);
+    border-color:var(--moss);
+    color:#fff;
+  }
+  .slot.selected .count{color:var(--moss-light);}
+  .slot.full{
+    opacity:.45;
+    cursor:not-allowed;
+  }
+  .slot.mine{
+    border-color:var(--gold);
+    background:var(--gold-light);
+  }
+
+  .room-card{
+    border:1px solid var(--line);
+    background:var(--card);
+    border-radius:var(--radius);
+    padding:14px 16px;
+    margin-bottom:10px;
+  }
+  .room-card .room-name{
+    font-weight:600;
+    font-size:15px;
+    margin:0 0 8px;
+  }
+  .room-slots{
+    display:flex;
+    flex-wrap:wrap;
+    gap:6px;
+  }
+  .room-slot{
+    border:1px solid var(--line);
+    background:var(--paper);
+    border-radius:8px;
+    padding:6px 10px;
+    font-size:12.5px;
+    font-weight:600;
+    cursor:pointer;
+    color:var(--ink-soft);
+  }
+  .room-slot.taken{
+    background:var(--clay-light);
+    color:var(--clay);
+    border-color:var(--clay-light);
+    cursor:not-allowed;
+  }
+  .room-slot.mine{
+    background:var(--gold-light);
+    border-color:var(--gold);
+    color:#7a5c1f;
+  }
+
+  .name-bar{
+    display:flex;
+    gap:8px;
+    margin-bottom:1.2rem;
+  }
+  .name-bar input{
+    flex:1;
+    border:1px solid var(--line);
+    border-radius:10px;
+    padding:10px 12px;
+    font-size:14px;
+    background:var(--card);
+    color:var(--ink);
+  }
+  .name-bar input:focus{outline:none; border-color:var(--moss);}
+
+  .status-msg{
+    text-align:center;
+    font-size:13px;
+    color:var(--ink-faint);
+    padding:10px 0 2px;
+    min-height:20px;
+  }
+  .status-msg.ok{color:var(--moss); font-weight:600;}
+  .status-msg.err{color:var(--clay); font-weight:600;}
+
+  .loading{
+    text-align:center;
+    color:var(--ink-faint);
+    font-size:13px;
+    padding:2rem 0;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <p class="eyebrow">Oficina</p>
+  <h1>Accessos ràpids</h1>
+</header>
+
+<nav>
+  <button class="tab-btn active" data-tab="fichar">Fitxar</button>
+  <button class="tab-btn" data-tab="menjador">Menjador</button>
+  <button class="tab-btn" data-tab="sales">Sales</button>
+</nav>
+
+<main>
+
+  <div class="name-bar">
+    <input type="text" id="nom" placeholder="El teu nom (per a les reserves)" />
+  </div>
+
+  <div class="panel active" id="panel-fichar">
+    <div class="fichar-card">
+      <p class="clock" id="rellotge">--:--</p>
+      <p class="date" id="data">-</p>
+      <a href="https://www.timenet.es" id="ficharLink" class="go-btn" target="_blank" rel="noopener">Anar a fitxar a Timenet</a>
+      <p class="hint">S'obrirà Timenet al navegador. Si tens la URL directa de la teva empresa, enganxa-la a sota perquè el proper cop l'accés sigui directe.</p>
+      <input type="text" id="timenetUrl" placeholder="https://laseva-empresa.timenet.es/..." style="margin-top:12px; width:100%; padding:10px 12px; border:1px solid var(--line); border-radius:10px; font-size:13px;" />
+    </div>
+  </div>
+
+  <div class="panel" id="panel-menjador">
+    <p class="section-label" id="menjadorLabel">Avui</p>
+    <div class="slot-grid" id="slotGrid"></div>
+    <p class="status-msg" id="menjadorStatus"></p>
+  </div>
+
+  <div class="panel" id="panel-sales">
+    <p class="section-label">Sales disponibles avui</p>
+    <div id="roomsList"></div>
+    <p class="status-msg" id="salesStatus"></p>
+  </div>
+
+</main>
+
+<script>
+const REPO_OWNER = "Al3x4004";
+const REPO_NAME = "NFC";
+const FILE_PATH = "dades.json";
+const API_URL = "https://api.github.com/repos/" + REPO_OWNER + "/" + REPO_NAME + "/contents/" + FILE_PATH;
+
+function getToken(){
+  let t = localStorage.getItem('gh_token');
+  if(!t){
+    t = prompt("Introdueix el token d'accés (només el primer cop en aquest mòbil):");
+    if(t) localStorage.setItem('gh_token', t.trim());
+  }
+  return t ? t.trim() : '';
+}
+const GH_TOKEN = getToken();
+
+const AFORAMENT_MAX = 4;
+const TORNS = ["13:00","13:30","14:00","14:30"];
+const SALES = ["Sala 1","Sala 2","Sala 3"];
+const HORES_SALA = ["09:00","10:00","11:00","12:00","13:00","15:00","16:00","17:00"];
+
+function avuiKey(){
+  return new Date().toISOString().slice(0,10);
+}
+
+function utf8ToBase64(str){
+  return btoa(unescape(encodeURIComponent(str)));
+}
+function base64ToUtf8(str){
+  return decodeURIComponent(escape(atob(str)));
+}
+
+async function fetchData(){
+  const res = await fetch(API_URL, {
+    headers: {
+      "Authorization": "token " + GH_TOKEN,
+      "Accept": "application/vnd.github+json"
+    },
+    cache: "no-store"
+  });
+  if(!res.ok) throw new Error("No s'ha pogut llegir el fitxer");
+  const json = await res.json();
+  const content = base64ToUtf8(json.content.replace(/\n/g,''));
+  return { data: JSON.parse(content), sha: json.sha };
+}
+
+async function saveData(newData, sha){
+  const body = {
+    message: "Actualitza dades " + new Date().toISOString(),
+    content: utf8ToBase64(JSON.stringify(newData, null, 2)),
+    sha: sha
+  };
+  const res = await fetch(API_URL, {
+    method: "PUT",
+    headers: {
+      "Authorization": "token " + GH_TOKEN,
+      "Accept": "application/vnd.github+json"
+    },
+    body: JSON.stringify(body)
+  });
+  if(!res.ok){
+    const err = await res.json().catch(()=>({}));
+    throw new Error(err.message || "Error en desar");
+  }
+  return res.json();
+}
+
+let nomCache = '';
+const nomInput = document.getElementById('nom');
+nomInput.addEventListener('input', ()=>{ nomCache = nomInput.value.trim(); });
+
+document.querySelectorAll('.tab-btn').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+    document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('panel-'+btn.dataset.tab).classList.add('active');
+    if(btn.dataset.tab === 'menjador') renderMenjador();
+    if(btn.dataset.tab === 'sales') renderSales();
+  });
+});
+
+function tick(){
+  const d = new Date();
+  document.getElementById('rellotge').textContent = d.toLocaleTimeString('ca-ES',{hour:'2-digit',minute:'2-digit'});
+  document.getElementById('data').textContent = d.toLocaleDateString('ca-ES',{weekday:'long', day:'numeric', month:'long'});
+}
+tick();
+setInterval(tick, 1000*15);
+
+const timenetUrlInput = document.getElementById('timenetUrl');
+const ficharLink = document.getElementById('ficharLink');
+const TIMENET_KEY = 'timenet-url-cache';
+let timenetCache = '';
+timenetUrlInput.addEventListener('change', ()=>{
+  const val = timenetUrlInput.value.trim();
+  if(!val) return;
+  ficharLink.href = val;
+  timenetCache = val;
+});
+
+const slotGrid = document.getElementById('slotGrid');
+const menjadorStatus = document.getElementById('menjadorStatus');
+
+async function renderMenjador(){
+  slotGrid.innerHTML = '<div class="loading">Carregant torns...</div>';
+  menjadorStatus.textContent = '';
+  let state;
+  try{
+    state = await fetchData();
+  }catch(e){
+    slotGrid.innerHTML = '<div class="loading">No s\'han pogut carregar els torns</div>';
+    return;
+  }
+  const key = avuiKey();
+  const dia = (state.data.menjador && state.data.menjador[key]) || {};
+
+  slotGrid.innerHTML = '';
+  TORNS.forEach(torn=>{
+    const persones = dia[torn] || [];
+    const meva = nomCache && persones.includes(nomCache);
+    const ple = persones.length >= AFORAMENT_MAX;
+    const div = document.createElement('div');
+    div.className = 'slot' + (meva ? ' mine selected' : '') + (ple && !meva ? ' full' : '');
+    div.innerHTML = torn + '<span class="count">' + persones.length + '/' + AFORAMENT_MAX + '</span>';
+    div.addEventListener('click', ()=>toggleMenjador(torn));
+    slotGrid.appendChild(div);
+  });
+}
+
+async function toggleMenjador(torn){
+  if(!nomCache){
+    menjadorStatus.textContent = 'Escriu el teu nom a dalt primer';
+    menjadorStatus.className = 'status-msg err';
+    return;
+  }
+  menjadorStatus.textContent = 'Desant...';
+  menjadorStatus.className = 'status-msg';
+  try{
+    const state = await fetchData();
+    const key = avuiKey();
+    state.data.menjador = state.data.menjador || {};
+    state.data.menjador[key] = state.data.menjador[key] || {};
+    const dia = state.data.menjador[key];
+
+    const persones = dia[torn] || [];
+    const ja = persones.includes(nomCache);
+
+    if(!ja && persones.length >= AFORAMENT_MAX){
+      menjadorStatus.textContent = 'Aquest torn ja està complet';
+      menjadorStatus.className = 'status-msg err';
+      return;
+    }
+
+    Object.keys(dia).forEach(t=>{
+      dia[t] = (dia[t]||[]).filter(n=>n!==nomCache);
+    });
+
+    if(!ja){
+      dia[torn] = dia[torn] || [];
+      dia[torn].push(nomCache);
+    }
+
+    await saveData(state.data, state.sha);
+    menjadorStatus.textContent = ja ? 'Reserva cancel·lada' : 'Reservat el torn de ' + torn;
+    menjadorStatus.className = 'status-msg ok';
+  }catch(e){
+    menjadorStatus.textContent = 'No s\'ha pogut desar, torna-ho a provar';
+    menjadorStatus.className = 'status-msg err';
+  }
+  renderMenjador();
+}
+
+const roomsList = document.getElementById('roomsList');
+const salesStatus = document.getElementById('salesStatus');
+
+async function renderSales(){
+  roomsList.innerHTML = '<div class="loading">Carregant sales...</div>';
+  salesStatus.textContent = '';
+  let state;
+  try{
+    state = await fetchData();
+  }catch(e){
+    roomsList.innerHTML = '<div class="loading">No s\'han pogut carregar les sales</div>';
+    return;
+  }
+  const key = avuiKey();
+  const dia = (state.data.sales && state.data.sales[key]) || {};
+
+  roomsList.innerHTML = '';
+  SALES.forEach(sala=>{
+    const salaData = dia[sala] || {};
+    const card = document.createElement('div');
+    card.className = 'room-card';
+    const slotsHtml = HORES_SALA.map(hora=>{
+      const qui = salaData[hora];
+      const meva = qui && qui === nomCache;
+      const ocupada = qui && !meva;
+      let cls = 'room-slot';
+      if(meva) cls += ' mine';
+      if(ocupada) cls += ' taken';
+      return '<div class="'+cls+'" data-sala="'+sala+'" data-hora="'+hora+'">'+hora+(ocupada?' · ocup.':'')+'</div>';
+    }).join('');
+    card.innerHTML = '<p class="room-name">'+sala+'</p><div class="room-slots">'+slotsHtml+'</div>';
+    roomsList.appendChild(card);
+  });
+
+  roomsList.querySelectorAll('.room-slot').forEach(el=>{
+    el.addEventListener('click', ()=>toggleSala(el.dataset.sala, el.dataset.hora));
+  });
+}
+
+async function toggleSala(sala, hora){
+  if(!nomCache){
+    salesStatus.textContent = 'Escriu el teu nom a dalt primer';
+    salesStatus.className = 'status-msg err';
+    return;
+  }
+  salesStatus.textContent = 'Desant...';
+  salesStatus.className = 'status-msg';
+  try{
+    const state = await fetchData();
+    const key = avuiKey();
+    state.data.sales = state.data.sales || {};
+    state.data.sales[key] = state.data.sales[key] || {};
+    const dia = state.data.sales[key];
+    dia[sala] = dia[sala] || {};
+
+    const actual = dia[sala][hora];
+
+    if(actual && actual !== nomCache){
+      salesStatus.textContent = 'Aquest horari ja està reservat per una altra persona';
+      salesStatus.className = 'status-msg err';
+      return;
+    }
+
+    if(actual === nomCache){
+      delete dia[sala][hora];
+    } else {
+      dia[sala][hora] = nomCache;
+    }
+
+    await saveData(state.data, state.sha);
+    salesStatus.textContent = actual === nomCache ? 'Reserva cancel·lada' : sala + ' reservada a les ' + hora;
+    salesStatus.className = 'status-msg ok';
+  }catch(e){
+    salesStatus.textContent = 'No s\'ha pogut desar, torna-ho a provar';
+    salesStatus.className = 'status-msg err';
+  }
+  renderSales();
+}
+</script>
+
+</body>
+</html>
