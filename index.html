@@ -403,20 +403,36 @@
   .admin-row{
     display:flex;
     justify-content:space-between;
-    align-items:baseline;
+    align-items:center;
     border-bottom:1px solid var(--line);
     padding:7px 2px;
     font-size:13.5px;
+    gap:10px;
   }
   .admin-row .k{
     font-family:'JetBrains Mono', monospace;
     color:var(--ink-soft);
+    flex-shrink:0;
   }
   .admin-row .v{
     color:var(--ink);
     font-weight:500;
     text-align:right;
+    flex:1;
   }
+  .admin-row .del-btn{
+    border:none;
+    background:var(--rust-light);
+    color:var(--rust);
+    width:26px;
+    height:26px;
+    border-radius:6px;
+    font-size:14px;
+    line-height:1;
+    cursor:pointer;
+    flex-shrink:0;
+  }
+  .admin-row .del-btn:active{filter:brightness(0.92);}
   .admin-empty{
     font-size:13px;
     color:var(--ink-soft);
@@ -464,12 +480,14 @@
     <p class="section-label">Torns d'avui</p>
     <div class="slot-grid" id="slotGrid"></div>
     <p class="status-msg" id="menjadorStatus"></p>
+    <p class="hint">Toca la teva reserva un altre cop per cancel·lar-la o canviar de torn.</p>
   </div>
 
   <div class="panel" id="panel-sales">
     <p class="section-label">Sales disponibles avui</p>
     <div id="roomsList"></div>
     <p class="status-msg" id="salesStatus"></p>
+    <p class="hint">Toca el teu horari reservat per alliberar-lo.</p>
   </div>
 
 </main>
@@ -534,9 +552,13 @@ async function saveData(newData, sha){
   return res.json();
 }
 
-let nomCache = '';
+let nomCache = localStorage.getItem('fitxatge_nom') || '';
 const nomInput = document.getElementById('nom');
-nomInput.addEventListener('input', ()=>{ nomCache = nomInput.value.trim(); });
+nomInput.value = nomCache;
+nomInput.addEventListener('input', ()=>{
+  nomCache = nomInput.value.trim();
+  localStorage.setItem('fitxatge_nom', nomCache);
+});
 
 document.querySelectorAll('.tab-btn').forEach(btn=>{
   btn.addEventListener('click', ()=>{
@@ -759,30 +781,69 @@ async function renderAdmin(){
   let hiHaMenjador = false;
   TORNS.forEach(torn=>{
     const persones = menjadorDia[torn] || [];
-    if(persones.length === 0) return;
-    hiHaMenjador = true;
-    const row = document.createElement('div');
-    row.className = 'admin-row';
-    row.innerHTML = '<span class="k">'+torn+'</span><span class="v">'+persones.join(', ')+'</span>';
-    adminMenjador.appendChild(row);
+    persones.forEach(persona=>{
+      hiHaMenjador = true;
+      const row = document.createElement('div');
+      row.className = 'admin-row';
+      row.innerHTML = '<span class="k">'+torn+'</span><span class="v">'+persona+'</span><button class="del-btn" data-torn="'+torn+'" data-persona="'+persona+'" aria-label="Eliminar">&times;</button>';
+      adminMenjador.appendChild(row);
+    });
   });
   if(!hiHaMenjador) adminMenjador.innerHTML = '<div class="admin-empty">Cap reserva encara</div>';
+
+  adminMenjador.querySelectorAll('.del-btn').forEach(btn=>{
+    btn.addEventListener('click', ()=>eliminarMenjador(btn.dataset.torn, btn.dataset.persona));
+  });
 
   adminSales.innerHTML = '';
   let hiHaSales = false;
   SALES.forEach(sala=>{
     const salaData = salesDia[sala] || {};
     const hores = Object.keys(salaData);
-    if(hores.length === 0) return;
-    hiHaSales = true;
     hores.sort().forEach(hora=>{
+      hiHaSales = true;
       const row = document.createElement('div');
       row.className = 'admin-row';
-      row.innerHTML = '<span class="k">'+sala+' · '+hora+'</span><span class="v">'+salaData[hora]+'</span>';
+      row.innerHTML = '<span class="k">'+sala+' · '+hora+'</span><span class="v">'+salaData[hora]+'</span><button class="del-btn" data-sala="'+sala+'" data-hora="'+hora+'" aria-label="Eliminar">&times;</button>';
       adminSales.appendChild(row);
     });
   });
   if(!hiHaSales) adminSales.innerHTML = '<div class="admin-empty">Cap reserva encara</div>';
+
+  adminSales.querySelectorAll('.del-btn').forEach(btn=>{
+    btn.addEventListener('click', ()=>eliminarSala(btn.dataset.sala, btn.dataset.hora));
+  });
+}
+
+async function eliminarMenjador(torn, persona){
+  try{
+    const state = await fetchData();
+    const key = avuiKey();
+    state.data.menjador = state.data.menjador || {};
+    state.data.menjador[key] = state.data.menjador[key] || {};
+    const dia = state.data.menjador[key];
+    dia[torn] = (dia[torn] || []).filter(n => n !== persona);
+    await saveData(state.data, state.sha);
+  }catch(e){
+    alert('No s\'ha pogut eliminar, torna-ho a provar');
+  }
+  renderAdmin();
+}
+
+async function eliminarSala(sala, hora){
+  try{
+    const state = await fetchData();
+    const key = avuiKey();
+    state.data.sales = state.data.sales || {};
+    state.data.sales[key] = state.data.sales[key] || {};
+    const dia = state.data.sales[key];
+    dia[sala] = dia[sala] || {};
+    delete dia[sala][hora];
+    await saveData(state.data, state.sha);
+  }catch(e){
+    alert('No s\'ha pogut eliminar, torna-ho a provar');
+  }
+  renderAdmin();
 }
 </script>
 
