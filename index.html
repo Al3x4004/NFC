@@ -293,7 +293,6 @@ function getToken(){
   }
   return t ? t.trim() : '';
 }
-const GH_TOKEN = getToken();
 
 const AFORAMENT_MAX = 4;
 const TORNS = ["13:00","13:30","14:00","14:30"];
@@ -312,9 +311,10 @@ function base64ToUtf8(str){
 }
 
 async function fetchData(){
+  const token = getToken();
   const res = await fetch(API_URL, {
     headers: {
-      "Authorization": "token " + GH_TOKEN,
+      "Authorization": "token " + token,
       "Accept": "application/vnd.github+json"
     },
     cache: "no-store"
@@ -326,6 +326,7 @@ async function fetchData(){
 }
 
 async function saveData(newData, sha){
+  const token = getToken();
   const body = {
     message: "Actualitza dades " + new Date().toISOString(),
     content: utf8ToBase64(JSON.stringify(newData, null, 2)),
@@ -334,7 +335,7 @@ async function saveData(newData, sha){
   const res = await fetch(API_URL, {
     method: "PUT",
     headers: {
-      "Authorization": "token " + GH_TOKEN,
+      "Authorization": "token " + token,
       "Accept": "application/vnd.github+json"
     },
     body: JSON.stringify(body)
