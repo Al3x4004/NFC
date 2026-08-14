@@ -616,39 +616,48 @@ async function toggleMenjador(torn){
   }
   menjadorStatus.textContent = 'Desant...';
   menjadorStatus.className = 'status-msg';
-  try{
-    const state = await fetchData();
-    const key = avuiKey();
-    state.data.menjador = state.data.menjador || {};
-    state.data.menjador[key] = state.data.menjador[key] || {};
-    const dia = state.data.menjador[key];
 
-    const persones = dia[torn] || [];
-    const ja = persones.includes(nomCache);
+  const MAX_INTENTS = 3;
+  for(let intent = 0; intent < MAX_INTENTS; intent++){
+    try{
+      const state = await fetchData();
+      const key = avuiKey();
+      state.data.menjador = state.data.menjador || {};
+      state.data.menjador[key] = state.data.menjador[key] || {};
+      const dia = state.data.menjador[key];
 
-    if(!ja && persones.length >= AFORAMENT_MAX){
-      menjadorStatus.textContent = 'Aquest torn ja està complet';
-      menjadorStatus.className = 'status-msg err';
+      const persones = dia[torn] || [];
+      const ja = persones.includes(nomCache);
+
+      if(!ja && persones.length >= AFORAMENT_MAX){
+        menjadorStatus.textContent = 'Aquest torn ja està complet';
+        menjadorStatus.className = 'status-msg err';
+        renderMenjador();
+        return;
+      }
+
+      Object.keys(dia).forEach(t=>{
+        dia[t] = (dia[t]||[]).filter(n=>n!==nomCache);
+      });
+
+      if(!ja){
+        dia[torn] = dia[torn] || [];
+        dia[torn].push(nomCache);
+      }
+
+      await saveData(state.data, state.sha);
+      menjadorStatus.textContent = ja ? 'Reserva cancel·lada' : 'Reservat el torn de ' + torn;
+      menjadorStatus.className = 'status-msg ok';
+      renderMenjador();
       return;
+    }catch(e){
+      if(intent === MAX_INTENTS - 1){
+        menjadorStatus.textContent = 'No s\'ha pogut desar, torna-ho a provar';
+        menjadorStatus.className = 'status-msg err';
+        renderMenjador();
+      }
     }
-
-    Object.keys(dia).forEach(t=>{
-      dia[t] = (dia[t]||[]).filter(n=>n!==nomCache);
-    });
-
-    if(!ja){
-      dia[torn] = dia[torn] || [];
-      dia[torn].push(nomCache);
-    }
-
-    await saveData(state.data, state.sha);
-    menjadorStatus.textContent = ja ? 'Reserva cancel·lada' : 'Reservat el torn de ' + torn;
-    menjadorStatus.className = 'status-msg ok';
-  }catch(e){
-    menjadorStatus.textContent = 'No s\'ha pogut desar, torna-ho a provar';
-    menjadorStatus.className = 'status-msg err';
   }
-  renderMenjador();
 }
 
 const roomsList = document.getElementById('roomsList');
@@ -698,36 +707,45 @@ async function toggleSala(sala, hora){
   }
   salesStatus.textContent = 'Desant...';
   salesStatus.className = 'status-msg';
-  try{
-    const state = await fetchData();
-    const key = avuiKey();
-    state.data.sales = state.data.sales || {};
-    state.data.sales[key] = state.data.sales[key] || {};
-    const dia = state.data.sales[key];
-    dia[sala] = dia[sala] || {};
 
-    const actual = dia[sala][hora];
+  const MAX_INTENTS = 3;
+  for(let intent = 0; intent < MAX_INTENTS; intent++){
+    try{
+      const state = await fetchData();
+      const key = avuiKey();
+      state.data.sales = state.data.sales || {};
+      state.data.sales[key] = state.data.sales[key] || {};
+      const dia = state.data.sales[key];
+      dia[sala] = dia[sala] || {};
 
-    if(actual && actual !== nomCache){
-      salesStatus.textContent = 'Aquest horari ja està reservat per una altra persona';
-      salesStatus.className = 'status-msg err';
+      const actual = dia[sala][hora];
+
+      if(actual && actual !== nomCache){
+        salesStatus.textContent = 'Aquest horari ja està reservat per una altra persona';
+        salesStatus.className = 'status-msg err';
+        renderSales();
+        return;
+      }
+
+      if(actual === nomCache){
+        delete dia[sala][hora];
+      } else {
+        dia[sala][hora] = nomCache;
+      }
+
+      await saveData(state.data, state.sha);
+      salesStatus.textContent = actual === nomCache ? 'Reserva cancel·lada' : sala + ' reservada a les ' + hora;
+      salesStatus.className = 'status-msg ok';
+      renderSales();
       return;
+    }catch(e){
+      if(intent === MAX_INTENTS - 1){
+        salesStatus.textContent = 'No s\'ha pogut desar, torna-ho a provar';
+        salesStatus.className = 'status-msg err';
+        renderSales();
+      }
     }
-
-    if(actual === nomCache){
-      delete dia[sala][hora];
-    } else {
-      dia[sala][hora] = nomCache;
-    }
-
-    await saveData(state.data, state.sha);
-    salesStatus.textContent = actual === nomCache ? 'Reserva cancel·lada' : sala + ' reservada a les ' + hora;
-    salesStatus.className = 'status-msg ok';
-  }catch(e){
-    salesStatus.textContent = 'No s\'ha pogut desar, torna-ho a provar';
-    salesStatus.className = 'status-msg err';
   }
-  renderSales();
 }
 
 const adminOverlay = document.getElementById('adminOverlay');
