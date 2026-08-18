@@ -783,17 +783,25 @@ fitxarBtn.addEventListener('click', async ()=>{
     });
     const out = await res.json();
     if(out.ok){
+      const esEntrada = out.action === 'entrada';
       fitxarBtn.className = 'go-btn fitxar-main ok';
-      fitxarBtn.textContent = 'Fitxat ✓';
-      fitxarStatus.textContent = 'Fitxatge registrat correctament.';
-    }else if(out.status === 403){
+      fitxarBtn.textContent = (esEntrada ? 'Entrada' : 'Sortida') + ' ✓';
+      let msg = (esEntrada ? 'Entrada' : 'Sortida') + ' registrada';
+      if(out.checkTime){
+        const h = new Date(out.checkTime).toLocaleTimeString('ca-ES', {hour:'2-digit', minute:'2-digit'});
+        msg += ' a les ' + h;
+      }
+      if(out.worker) msg += ' · ' + out.worker;
+      if(out.repeated) msg += ' ⚠️ (ja havies fitxat fa poc)';
+      fitxarStatus.textContent = msg + '.';
+    }else if(out.code === 'pin'){
       fitxarBtn.className = 'go-btn fitxar-main err';
       fitxarBtn.textContent = 'PIN incorrecte';
       fitxarStatus.textContent = 'El PIN no és correcte. Toca "Canviar" per corregir-lo.';
     }else{
       fitxarBtn.className = 'go-btn fitxar-main err';
       fitxarBtn.textContent = 'Error';
-      fitxarStatus.textContent = out.error || ('No s\'ha pogut fitxar (codi ' + (out.status||'?') + ').');
+      fitxarStatus.textContent = out.error || 'No s\'ha pogut fitxar.';
     }
   }catch(e){
     fitxarBtn.className = 'go-btn fitxar-main err';
